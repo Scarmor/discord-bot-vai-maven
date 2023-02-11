@@ -4,26 +4,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>scarmor.bot</groupId>
     <artifactId>discord-bot-vai-maven</artifactId>
     <version>1.0-SNAPSHOT</version>
+
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.0.2</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>scarmor.bot.Bot</mainClass>
-                        </manifest>
-                    </archive>
+                    <mainClass>scarmor.bot.Bot</mainClass>
+                    <layout>JAR</layout>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
