@@ -28,16 +28,10 @@ public class Bot extends ListenerAdapter {
     private static final String API_KEY_BOT = System.getenv("DISCORD_API_KEY");
     private static final String API_URL = "https://api.openai.com/v1/completions";
 
-    static {
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(API_KEY_GPT);
-        post.setHeader("Content-Type", "application/json; charset=utf-8");
-        post.setHeader("Authorization", "Bearer " + API_KEY_GPT);
-    }
 
     public static String generateAnswer(String prompt) throws Exception {
         CloseableHttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(API_KEY_GPT);
+        HttpPost post = new HttpPost(API_URL);
         post.setHeader("Content-Type", "application/json; charset=utf-8");
         post.setHeader("Authorization", "Bearer " + API_KEY_GPT);
 
