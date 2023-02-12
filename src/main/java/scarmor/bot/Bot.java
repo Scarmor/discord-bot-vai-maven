@@ -73,6 +73,8 @@ public class Bot extends ListenerAdapter {
             List<String> imageUrls = extractImageUrls(responseBody);
             imageUrls.forEach(System.out::println);
             return imageUrls;
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 

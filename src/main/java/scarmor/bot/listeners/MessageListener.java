@@ -71,7 +71,7 @@ public class MessageListener extends ListenerAdapter {
                         event.getChannel().sendMessage(image).queue();
                     }
                 } catch (IOException e) {
-                    event.reply("Wrong request").queue();
+                    event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
                 }
                 break;
         }
