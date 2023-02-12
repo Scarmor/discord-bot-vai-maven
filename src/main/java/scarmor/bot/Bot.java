@@ -76,7 +76,7 @@ public class Bot extends ListenerAdapter {
         }
     }
 
-    private static List<String> extractImageUrls(String responseBody) {
+    private static List<String> extractImageUrls(String responseBody) throws IOException {
         List<String> imageUrls = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(responseBody);
@@ -87,7 +87,7 @@ public class Bot extends ListenerAdapter {
                 imageUrls.add(imageUrl);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            throw new IOException(e);
         }
         return imageUrls;
     }
@@ -107,6 +107,6 @@ public class Bot extends ListenerAdapter {
                 Commands.slash("max_tokens", "Change the maximum number of generated words")
                         .addOption(OptionType.INTEGER, "max_tokens", "Choose a number from 500 to 4000", true),
                 Commands.slash("generate_image", "Generate unique image")
-                        .addOption(OptionType.STRING, "prompt", "Write the text on which the image will be generated", true)).queue();
+                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true)).queue();
     }
 }
