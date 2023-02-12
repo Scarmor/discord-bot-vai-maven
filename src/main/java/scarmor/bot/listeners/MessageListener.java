@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import scarmor.bot.Bot;
 
+import java.io.IOException;
+import java.util.List;
+
 
 public class MessageListener extends ListenerAdapter {
 
@@ -27,9 +30,9 @@ public class MessageListener extends ListenerAdapter {
                         String answer = Bot.generateAnswer(messageSent);
                         System.out.println(answer);
                         event.getChannel().addReactionById(event.getMessageId(),"\uD83C\uDF70").queue();
-                        event.getChannel().sendMessage(answer).queue();
+                        event.getMessage().reply(answer).queue();
                     } catch (Exception e) {
-                        event.getChannel().sendMessage("Wrong request").queue();
+                        event.getMessage().reply("Wrong request").queue();
                     }
                 }
                 super.run();
@@ -44,20 +47,31 @@ public class MessageListener extends ListenerAdapter {
             case "temperature":
                 double optionTemp = event.getOption("temperature").getAsDouble();
                 if (optionTemp < 0 || optionTemp > 1) {
-                    event.getChannel().sendMessageFormat("You entered an invalid parameter value").queue();
+                    event.reply("You entered an invalid parameter value").queue();
                 } else {
-                    event.getChannel().sendMessageFormat("Successful change of the parameter \"temperature\"").queue();
+                    event.reply("Successful change of the parameter \"temperature\"").queue();
                     Bot.temperature = optionTemp;
                 }
                 break;
             case "max_tokens":
-                event.getChannel().sendMessageFormat("Successful change of the parameter \"max_tokens\"").queue();
                 int optionTokens = event.getOption("temperature").getAsInt();
                 if (optionTokens < 500 || optionTokens > 4000) {
-                    event.getChannel().sendMessageFormat("You entered an invalid parameter value").queue();
+                    event.reply("You entered an invalid parameter value").queue();
                 } else {
-                    event.getChannel().sendMessageFormat("Successful change of the parameter \"temperature\"").queue();
+                    event.reply("Successful change of the parameter \"temperature\"").queue();
                     Bot.max_tokens = optionTokens;
+                }
+                break;
+            case "generate_image":
+                try {
+                    String prompt = event.getOption("prompt").getAsString();
+                    event.reply("Image by request \"" + prompt + "\"").queue();
+                    List<String> images = Bot.generateImages(prompt, 1);
+                    for (String image : images) {
+                        event.getChannel().sendMessage(image).queue();
+                    }
+                } catch (IOException e) {
+                    event.reply("Wrong request").queue();
                 }
                 break;
         }
