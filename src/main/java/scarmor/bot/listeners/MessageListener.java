@@ -6,10 +6,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import scarmor.bot.Bot;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.List;
 
 
@@ -71,7 +69,7 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        event.getChannel().sendFile(new File(Path.of(image).toUri())).queue();
+                        event.getChannel().sendMessage(image).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
