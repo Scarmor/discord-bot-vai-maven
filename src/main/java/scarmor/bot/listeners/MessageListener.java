@@ -71,8 +71,7 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        File file = new File(Path.of(image).toUri());
-                        event.getChannel().sendFile(file).queue();
+                        event.getChannel().sendFile(new File(Path.of(image).toUri())).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
