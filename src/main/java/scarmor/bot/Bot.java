@@ -34,9 +34,28 @@ public class Bot extends ListenerAdapter {
     private static final String API_KEY_GPT = System.getenv("OPENAI_API_KEY");
     private static final String API_KEY_BOT = System.getenv("DISCORD_API_KEY");
     private static final String API_URL = "https://api.openai.com/v1/completions";
-
     private static final String IMAGE_URL = "https://api.openai.com/v1/images/generations";
 
+
+    public static void main(String[] args) throws Exception {
+        JDA jda = JDABuilder.createDefault(API_KEY_BOT)
+                .addEventListeners(new MessageListener())
+                .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
+                .setBulkDeleteSplittingEnabled(false)
+                .setCompression(Compression.NONE)
+                .setActivity(Activity.listening("Hentai"))
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .build();
+        jda.updateCommands().addCommands(
+                Commands.slash("temperature", "Change the randomness of the bot's statements (0 - 1)")
+                        .addOption(OptionType.NUMBER, "temperature", "Choose temperature from 0 (No Random) to 1 (Absolutely Random)", true),
+                Commands.slash("max_tokens", "Change the maximum number of generated words")
+                        .addOption(OptionType.INTEGER, "max_tokens", "Choose a number from 500 to 4000", true),
+                Commands.slash("generate_image", "Generate unique image")
+                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true),
+                Commands.slash("generate_image_ru", "Generate unique image (translate russian to english)")
+                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true)).queue();
+    }
 
     public static String generateAnswer(String prompt) throws Exception {
         CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -94,21 +113,5 @@ public class Bot extends ListenerAdapter {
         return imageUrls;
     }
 
-    public static void main(String[] args) throws Exception {
-        JDA jda = JDABuilder.createDefault(API_KEY_BOT)
-                .addEventListeners(new MessageListener())
-                .disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
-                .setBulkDeleteSplittingEnabled(false)
-                .setCompression(Compression.NONE)
-                .setActivity(Activity.listening("Hentai"))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .build();
-        jda.updateCommands().addCommands(
-                Commands.slash("temperature", "Change the randomness of the bot's statements (0 - 1)")
-                        .addOption(OptionType.NUMBER, "temperature", "Choose temperature from 0 (No Random) to 1 (Absolutely Random)", true),
-                Commands.slash("max_tokens", "Change the maximum number of generated words")
-                        .addOption(OptionType.INTEGER, "max_tokens", "Choose a number from 500 to 4000", true),
-                Commands.slash("generate_image", "Generate unique image")
-                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true)).queue();
-    }
+
 }
