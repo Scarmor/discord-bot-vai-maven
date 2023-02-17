@@ -9,6 +9,7 @@ import scarmor.bot.Bot;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.List;
 
 
@@ -70,7 +71,7 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        File file = new File(image);
+                        File file = new File(Path.of(image).toUri());
                         event.getChannel().sendFile(file).queue();
                     }
                 } catch (IOException e) {
