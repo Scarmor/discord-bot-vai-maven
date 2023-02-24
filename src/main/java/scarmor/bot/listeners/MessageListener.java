@@ -93,12 +93,12 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        String fileDirectory = downloadFile(image);
-                        File initialFile = new File(fileDirectory);
+                        Path fileDirectory = downloadFile(image);
+                        File initialFile = new File(fileDirectory.toString());
                         InputStream imageStream = new FileInputStream(initialFile);
                         byte[] imageBytes = imageStream.readAllBytes();
                         imageStream.close();
-                        event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
+                        event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
@@ -111,12 +111,12 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + ruPrompt + "\"").queue();
                     List<String> images = Bot.generateImages(enPrompt, 1);
                     for (String image : images) {
-                        String fileDirectory = downloadFile(image);
-                        File initialFile = new File(fileDirectory);
+                        Path fileDirectory = downloadFile(image);
+                        File initialFile = new File(fileDirectory.toString());
                         InputStream imageStream = new FileInputStream(initialFile);
                         byte[] imageBytes = imageStream.readAllBytes();
                         imageStream.close();
-                        event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
+                        event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Either you are using special characters, or you are using invalid statements, or an error occurred while executing the query for some other reason.").queue();
@@ -141,12 +141,12 @@ public class MessageListener extends ListenerAdapter {
                         event.getChannel().sendMessage("Random generation by request: " + answer).queue();
                         List<String> images = Bot.generateImages(enPrompt, 1);
                         for (String image : images) {
-                            String fileDirectory = downloadFile(image);
-                            File initialFile = new File(fileDirectory);
+                            Path fileDirectory = downloadFile(image);
+                            File initialFile = new File(fileDirectory.toString());
                             InputStream imageStream = new FileInputStream(initialFile);
                             byte[] imageBytes = imageStream.readAllBytes();
                             imageStream.close();
-                            event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
+                            event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
                         }
 
                     } catch (Exception e) {
@@ -196,15 +196,15 @@ public class MessageListener extends ListenerAdapter {
         return result;
     }
 
-    private static String downloadFile(String link) {
-        String filePath = "";
+    private static Path downloadFile(String link) {
         try {
             Random random = new Random();
-            filePath = "src/main/resources/images/" + random.nextInt() + "a" + random.nextInt() + ".png";
-            Files.write(Path.of(filePath), new BufferedInputStream(new URL(link).openStream()).readAllBytes());
+            String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
+            Path filePath = Path.of("src", "main", "resources", "images", fileName);
+            Files.write(filePath, new BufferedInputStream(new URL(link).openStream()).readAllBytes());
+            return filePath;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return filePath;
     }
 }
