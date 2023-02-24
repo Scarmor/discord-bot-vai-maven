@@ -150,7 +150,7 @@ public class MessageListener extends ListenerAdapter {
                         }
 
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        event.getChannel().sendMessage("Generation Error").queue();
                     }
                     super.run();
                     try {
