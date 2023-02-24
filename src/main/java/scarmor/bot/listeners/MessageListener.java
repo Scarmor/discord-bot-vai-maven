@@ -1,5 +1,8 @@
 package scarmor.bot.listeners;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -16,15 +19,24 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import scarmor.bot.Bot;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Future;
 
 
 public class MessageListener extends ListenerAdapter {
 
-    private final String IAM_TOKEN = System.getenv("YANDEX_IAM");
-    private final String folder_id = System.getenv("YANDEX_FOLDER_ID");
+    private static final String IAM_TOKEN = System.getenv("YANDEX_IAM");
+    private static final String folder_id = System.getenv("YANDEX_FOLDER_ID");
+
+
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -81,7 +93,12 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        event.getChannel().sendMessage(image).queue();
+                        String fileDirectory = downloadFile(image);
+                        File initialFile = new File(fileDirectory);
+                        InputStream imageStream = new FileInputStream(initialFile);
+                        byte[] imageBytes = imageStream.readAllBytes();
+                        imageStream.close();
+                        event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
@@ -94,16 +111,60 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + ruPrompt + "\"").queue();
                     List<String> images = Bot.generateImages(enPrompt, 1);
                     for (String image : images) {
-                        event.getChannel().sendMessage(image).queue();
+                        String fileDirectory = downloadFile(image);
+                        File initialFile = new File(fileDirectory);
+                        InputStream imageStream = new FileInputStream(initialFile);
+                        byte[] imageBytes = imageStream.readAllBytes();
+                        imageStream.close();
+                        event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Either you are using special characters, or you are using invalid statements, or an error occurred while executing the query for some other reason.").queue();
                 }
                 break;
+            case "automatic_generate_on":
+                event.reply("----------\nAutomatic generations is on\n----------").queue();
+                automaticGenerate(event);
         }
     }
 
-    private String translate(String ruString) {
+    public static void automaticGenerate(SlashCommandInteractionEvent event) {
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                while (true) {
+                    String messageSent = "Придумай необычное и смешное предложение, включающее в себя не больше 5 слов на русском языке. Не используй кавычки.";
+                    try {
+                        String answer = Bot.generateAnswer(messageSent);
+                        String enPrompt = translate(answer);
+                        enPrompt = enPrompt.replaceAll("\n", "");
+                        event.getChannel().sendMessage("Random generation by request: " + answer).queue();
+                        List<String> images = Bot.generateImages(enPrompt, 1);
+                        for (String image : images) {
+                            String fileDirectory = downloadFile(image);
+                            File initialFile = new File(fileDirectory);
+                            InputStream imageStream = new FileInputStream(initialFile);
+                            byte[] imageBytes = imageStream.readAllBytes();
+                            imageStream.close();
+                            event.getChannel().sendFile(imageBytes, fileDirectory.substring(fileDirectory.lastIndexOf('/') + 1)).queue();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    super.run();
+                    try {
+                        Thread.sleep(1800000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+        thread.start();
+    }
+
+    private static String translate(String ruString) {
         HttpClient httpClient = HttpClientBuilder.create().build();
         String result = "";
         try {
@@ -132,5 +193,17 @@ public class MessageListener extends ListenerAdapter {
             httpClient.getConnectionManager().shutdown();
         }
         return result;
+    }
+
+    private static String downloadFile(String link) {
+        String filePath = "";
+        try {
+            Random random = new Random();
+            filePath = "src/main/resources/images/" + random.nextInt() + "a" + random.nextInt() + ".png";
+            Files.write(Path.of(filePath), new BufferedInputStream(new URL(link).openStream()).readAllBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return filePath;
     }
 }

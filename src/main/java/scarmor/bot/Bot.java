@@ -54,7 +54,8 @@ public class Bot extends ListenerAdapter {
                 Commands.slash("generate_image", "Generate unique image")
                         .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true),
                 Commands.slash("generate_image_ru", "Generate unique image (translate russian to english)")
-                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true)).queue();
+                        .addOption(OptionType.STRING, "prompt", "Write the text for generating. Don't use special characters", true),
+                Commands.slash("automatic_generate_on", "Randomly generated pictures will be sent to the chat every 3 hours")).queue();
     }
 
     public static String generateAnswer(String prompt) throws Exception {
