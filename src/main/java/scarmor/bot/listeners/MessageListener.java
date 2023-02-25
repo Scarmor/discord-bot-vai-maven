@@ -93,12 +93,9 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + prompt + "\"").queue();
                     List<String> images = Bot.generateImages(prompt, 1);
                     for (String image : images) {
-                        Path fileDirectory = downloadFile(image);
-                        File initialFile = new File(fileDirectory.toString());
-                        InputStream imageStream = new FileInputStream(initialFile);
-                        byte[] imageBytes = imageStream.readAllBytes();
-                        imageStream.close();
-                        event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
+                        Random random = new Random();
+                        String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
+                        event.getChannel().sendFile(new BufferedInputStream(new URL(image).openStream()).readAllBytes(), fileName).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Don't use special symbols!").queue();
@@ -111,12 +108,9 @@ public class MessageListener extends ListenerAdapter {
                     event.reply("Image by request \"" + ruPrompt + "\"").queue();
                     List<String> images = Bot.generateImages(enPrompt, 1);
                     for (String image : images) {
-                        Path fileDirectory = downloadFile(image);
-                        File initialFile = new File(fileDirectory.toString());
-                        InputStream imageStream = new FileInputStream(initialFile);
-                        byte[] imageBytes = imageStream.readAllBytes();
-                        imageStream.close();
-                        event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
+                        Random random = new Random();
+                        String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
+                        event.getChannel().sendFile(new BufferedInputStream(new URL(image).openStream()).readAllBytes(), fileName).queue();
                     }
                 } catch (IOException e) {
                     event.getChannel().sendMessage("Wrong prompt. Either you are using special characters, or you are using invalid statements, or an error occurred while executing the query for some other reason.").queue();
@@ -142,12 +136,16 @@ public class MessageListener extends ListenerAdapter {
                         event.getChannel().sendMessage("Random generation by request: " + answer).queue();
                         List<String> images = Bot.generateImages(enPrompt, 1);
                         for (String image : images) {
-                            Path fileDirectory = downloadFile(image);
-                            File initialFile = new File(fileDirectory.toString());
-                            InputStream imageStream = new FileInputStream(initialFile);
-                            byte[] imageBytes = imageStream.readAllBytes();
-                            imageStream.close();
-                            event.getChannel().sendFile(imageBytes, String.valueOf(fileDirectory.getFileName())).queue();
+
+//                            Path fileDirectory = downloadFile(image);
+//                            File initialFile = new File(fileDirectory.toString());
+//                            InputStream imageStream = new FileInputStream(initialFile);
+//                            byte[] imageBytes = imageStream.readAllBytes();
+//                            imageStream.close();
+
+                            Random random = new Random();
+                            String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
+                            event.getChannel().sendFile(new BufferedInputStream(new URL(image).openStream()).readAllBytes(), fileName).queue();
                         }
 
                     } catch (Exception e) {
