@@ -18,6 +18,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import scarmor.bot.Bot;
+import scarmor.bot.ExecuteShellCommand;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -172,7 +173,9 @@ public class MessageListener extends ListenerAdapter {
             String body = String.format("{\"targetLanguageCode\":\"%s\",\"texts\":\"%s\",\"folderId\":\"%s\"}", "en", ruString, folder_id);
             StringEntity params = new StringEntity(body, "UTF-8");
             params.setContentType("charset=UTF-8");
-            String auth = String.format("Bearer %s", IAM_TOKEN);
+            ExecuteShellCommand com = new ExecuteShellCommand();
+            String finallyToken = com.executeCommand("curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"<OAuth-token>\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
+            String auth = String.format("Bearer %s", finallyToken);
             request.addHeader("content-type", "application/json");
             request.addHeader("Authorization", auth);
             request.setEntity(params);
@@ -194,6 +197,7 @@ public class MessageListener extends ListenerAdapter {
         }
         return result;
     }
+
 
     private static Path downloadFile(String link) {
         try {
