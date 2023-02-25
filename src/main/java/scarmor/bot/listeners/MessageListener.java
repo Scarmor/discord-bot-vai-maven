@@ -179,7 +179,8 @@ public class MessageListener extends ListenerAdapter {
                 e.printStackTrace();
             }
 
-            finallyToken = finallyToken.substring("\"iamToken\": \"".length() + 1, finallyToken.indexOf(','));
+            System.out.println(finallyToken);
+            finallyToken = finallyToken.substring(finallyToken.indexOf("\"iamToken\": \"") + 1, finallyToken.indexOf(','));
 
             System.out.println("----------\n" + finallyToken + "\n----------");
             String auth = String.format("Bearer %s", finallyToken);
