@@ -166,19 +166,20 @@ public class MessageListener extends ListenerAdapter {
             StringEntity params = new StringEntity(body, "UTF-8");
             params.setContentType("charset=UTF-8");
             String line = "";
+            String finallyToken = "";
             try {
                 ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"" + IAM_TOKEN +"\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
                 Process process = pb.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 while ((line = reader.readLine()) != null) {
-                    line += line;
+                    finallyToken += line;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            System.out.println(line);
-            String finallyToken = line.substring(line.indexOf("\"iamToken\": \"") + 1, line.indexOf(','));
+            System.out.println(finallyToken);
+            finallyToken = line.substring(line.indexOf("\"iamToken\": \"") + 1, line.indexOf(','));
 
             System.out.println("----------\n" + finallyToken + "\n----------");
             String auth = String.format("Bearer %s", finallyToken);
