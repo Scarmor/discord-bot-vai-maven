@@ -175,6 +175,7 @@ public class MessageListener extends ListenerAdapter {
             params.setContentType("charset=UTF-8");
             ExecuteShellCommand com = new ExecuteShellCommand();
             String finallyToken = com.executeCommand("curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"<OAuth-token>\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
+            System.out.println(finallyToken);
             String auth = String.format("Bearer %s", finallyToken);
             request.addHeader("content-type", "application/json");
             request.addHeader("Authorization", auth);
