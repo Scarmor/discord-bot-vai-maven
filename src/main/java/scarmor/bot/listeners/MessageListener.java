@@ -165,20 +165,19 @@ public class MessageListener extends ListenerAdapter {
             String body = String.format("{\"targetLanguageCode\":\"%s\",\"texts\":\"%s\",\"folderId\":\"%s\"}", "en", ruString, folder_id);
             StringEntity params = new StringEntity(body, "UTF-8");
             params.setContentType("charset=UTF-8");
-
+            String line = "";
             try {
                 ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"" + IAM_TOKEN +"\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
                 Process process = pb.start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            String finallyToken = line.substring("\"iamToken\": \"".length() + 1, line.indexOf(','));
 
-            String finallyToken = "";
             System.out.println("----------\n" + finallyToken + "\n----------");
             String auth = String.format("Bearer %s", finallyToken);
             request.addHeader("content-type", "application/json");
