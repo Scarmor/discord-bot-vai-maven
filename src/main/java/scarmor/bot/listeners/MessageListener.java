@@ -201,8 +201,10 @@ public class MessageListener extends ListenerAdapter {
             Random random = new Random();
             String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
             Path filePath = Path.of("src", "main", "resources", fileName);
-            Files.write(filePath, new BufferedInputStream(new URL(link).openStream()).readAllBytes());
-            return filePath;
+            Path finallyPath = Files.write(filePath, new BufferedInputStream(new URL(link).openStream()).readAllBytes());
+            System.out.println(filePath);
+            System.out.println(finallyPath);
+            return finallyPath;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
