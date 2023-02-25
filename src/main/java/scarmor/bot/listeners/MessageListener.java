@@ -154,7 +154,7 @@ public class MessageListener extends ListenerAdapter {
                     }
                     super.run();
                     try {
-                        Thread.sleep(1800000);
+                        Thread.sleep(10800000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
