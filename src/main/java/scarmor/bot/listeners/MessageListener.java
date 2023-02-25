@@ -125,6 +125,7 @@ public class MessageListener extends ListenerAdapter {
             case "automatic_generate_on":
                 event.reply("----------\nAutomatic generations is on\n----------").queue();
                 automaticGenerate(event);
+                break;
         }
     }
 
@@ -202,8 +203,6 @@ public class MessageListener extends ListenerAdapter {
             String fileName = random.nextInt() + "a" + random.nextInt() + ".png";
             Path filePath = Path.of("src", "main", "resources", fileName);
             Path finallyPath = Files.write(filePath, new BufferedInputStream(new URL(link).openStream()).readAllBytes());
-            System.out.println(filePath);
-            System.out.println(finallyPath);
             return finallyPath;
         } catch (IOException e) {
             throw new RuntimeException(e);
