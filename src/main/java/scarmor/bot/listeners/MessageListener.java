@@ -1,8 +1,5 @@
 package scarmor.bot.listeners;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -18,18 +15,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import scarmor.bot.Bot;
-import scarmor.bot.ExecuteShellCommand;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.Future;
 
 
 public class MessageListener extends ListenerAdapter {
@@ -173,8 +165,20 @@ public class MessageListener extends ListenerAdapter {
             String body = String.format("{\"targetLanguageCode\":\"%s\",\"texts\":\"%s\",\"folderId\":\"%s\"}", "en", ruString, folder_id);
             StringEntity params = new StringEntity(body, "UTF-8");
             params.setContentType("charset=UTF-8");
-            ExecuteShellCommand com = new ExecuteShellCommand();
-            String finallyToken = com.executeCommand("curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"" + IAM_TOKEN +"\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
+
+            try {
+                ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "curl -d \"{\\\"yandexPassportOauthToken\\\":\\\"" + IAM_TOKEN +"\\\"}\" \"https://iam.api.cloud.yandex.net/iam/v1/tokens\"\n");
+                Process process = pb.start();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String finallyToken = "";
             System.out.println("----------\n" + finallyToken + "\n----------");
             String auth = String.format("Bearer %s", finallyToken);
             request.addHeader("content-type", "application/json");
