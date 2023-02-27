@@ -44,7 +44,7 @@ public class Bot extends ListenerAdapter {
                 .setBulkDeleteSplittingEnabled(false)
                 .setCompression(Compression.NONE)
                 .setActivity(Activity.listening("Hentai"))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES)
                 .build();
         jda.updateCommands().addCommands(
                 Commands.slash("temperature", "Change the randomness of the bot's statements (0 - 1)")
